@@ -1,5 +1,5 @@
-package com.macallan.lab_7;
 
+package com.macallan.lab_7;
 
 
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -7,99 +7,44 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Optional;
 
 @Controller
-public class productgraphqlcontroller {
+public class ProductGraphQLController {
 
-    private final List<Product> products = new ArrayList<>();
-    private final AtomicLong idCounter = new AtomicLong(1);
+    private final ProductService productService;
 
-    public productgraphqlcontroller() {
-        products.add(new Product(idCounter.getAndIncrement(), "tanduay", 999.99));
-        products.add(new Product(idCounter.getAndIncrement(), "redhorse", 699.99));
-        products.add(new Product(idCounter.getAndIncrement(), "beer", 299.99));
+    public ProductGraphQLController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    // QUERIES
+    @QueryMapping
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
     }
 
     @QueryMapping
-    public List<Product> products() {
-        return new ArrayList<>(products);
+    public Product getProductById(@Argument Long id) {
+        Optional<Product> product = productService.getProductById(id);
+        return product.orElse(null);
     }
 
-    @QueryMapping
-    public Product product(@Argument Long id) {
-        return products.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @QueryMapping
-    public List<Product> searchProducts(@Argument String name) {
-        return products.stream()
-                .filter(p -> p.getName().toLowerCase().contains(name.toLowerCase()))
-                .toList();
-    }
-
+    // MUTATIONS
     @MutationMapping
     public Product createProduct(@Argument String name, @Argument Double price) {
-        Product newProduct = new Product(idCounter.getAndIncrement(), name, price);
-        products.add(newProduct);
-        return newProduct;
+        return productService.createProduct(new Product(null, name, price));
     }
 
     @MutationMapping
     public Product updateProduct(@Argument Long id, @Argument String name, @Argument Double price) {
-        for (Product product : products) {
-            if (product.getId().equals(id)) {
-                if (name != null) product.setName(name);
-                if (price != null) product.setPrice(price);
-                return product;
-            }
-        }
-        return null;
+        return productService.updateProduct(id, new Product(id, name, price)).orElse(null);
     }
 
     @MutationMapping
     public Boolean deleteProduct(@Argument Long id) {
-        return products.removeIf(product -> product.getId().equals(id));
-    }
-
-    @QueryMapping
-    public String hello() {
-        return "Hello from GraphQL Controller!";
-    }
-
-    @QueryMapping
-    public String greet(@Argument String name) {
-        return "Hello, " + name + "! Welcome to GraphQL";
-    }
-
-    public static class Product {
-        private Long id;
-        private String name;
-        private Double price;
-
-        public Product() {}
-        public Product(Long id, String name, Double price) {
-            this.id = id;
-            this.name = name;
-            this.price = price;
-        }
-
-        public Long getId() { return id; }
-        public void setId(Long id) { this.id = id; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public Double getPrice() { return price; }
-        public void setPrice(Double price) { this.price = price; }
+        return productService.deleteProduct(id);
     }
 }
-
-
-
-
-
 

@@ -8,7 +8,9 @@ import java.util.*;
 public class ProductService {
 
     private Map<Long, Product> productDB = new HashMap<>();
-    private Long nextId = 4L;
+    private Long
+
+            nextId = 4L;
 
     public ProductService() {
         // Initial mock data
