@@ -1,4 +1,4 @@
-package com.macallan.lab_7;
+package Model;
 
 public class Product {
     private Long id;

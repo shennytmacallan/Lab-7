@@ -1,5 +1,6 @@
-package com.macallan.lab_7;
+package Service;
 
+import Model.Product;
 import org.springframework.stereotype.Service;
 import java.util.*;
 

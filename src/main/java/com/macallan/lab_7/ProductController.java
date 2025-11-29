@@ -1,5 +1,7 @@
 package com.macallan.lab_7;
 
+import Model.Product;
+import Service.ProductService;
 import org.springframework.http.*;
         import org.springframework.web.bind.annotation.*;
         import java.util.List;
