@@ -1,6 +1,9 @@
-
-
 type Product {
+    id: ID
+    name: String
+    price: Float
+}
+input ProductInput {
     id: ID!
     name: String!
     price: Float!
